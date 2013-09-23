@@ -28,7 +28,6 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         old_status = self.__original_status
         new_status = self.status
-        print(new_status)
         has_changed_status = old_status != new_status
         if has_changed_status:
             product = self.product
