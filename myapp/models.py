@@ -30,7 +30,7 @@ class Order(models.Model):
         new_status = self.status
         has_changed_status = old_status != new_status
         if has_changed_status:
-            product = self.product
+            product = Product.objects.select_for_update(nowait=True).get(pk=self.product.pk)
             if not old_status in Order.EXISTING_STATUS and new_status in Order.EXISTING_STATUS:
                 product.stock = F('stock') - 1
                 product.save(update_fields=['stock'])
