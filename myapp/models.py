@@ -1,5 +1,6 @@
-from django.db import models
+from django.db import models, transaction
 from django.db.models import F
+from time import sleep
 
 class Product(models.Model):
     name = models.CharField(max_length=30)
@@ -18,27 +19,24 @@ class Order(models.Model):
     status = models.CharField(max_length = 2, choices = STATUS, default = DRAFT)
     EXISTING_STATUS = set([INPROGRESS])
 
-    __original_status = None
-
-    def __init__(self, *args, **kwargs):
-        super(Order, self).__init__(*args, **kwargs)
-        self.__original_status = self.status
-        print(self.__original_status)
-
     def save(self, *args, **kwargs):
-        old_status = self.__original_status
-        new_status = self.status
-        has_changed_status = old_status != new_status
-        if has_changed_status:
-            product = Product.objects.select_for_update(nowait=True).get(pk=self.product.pk)
-            if not old_status in Order.EXISTING_STATUS and new_status in Order.EXISTING_STATUS:
-                product.stock = F('stock') - 1
-                product.save(update_fields=['stock'])
-            elif old_status in Order.EXISTING_STATUS and not new_status in Order.EXISTING_STATUS:
-                product.stock = F('stock') + 1
-                product.save(update_fields=['stock'])
+        if self.status == "AB": # If status == AB, check products we need to update
+            with transaction.commit_manually():
+                updated_product = Product.objects.filter(order__pk = self.pk, order__status = 'PR').update(stock = F('stock') - 1 )
+                sleep(1) # To have some fun
+                if updated_product == 1:
+                    super(Order, self).save(*args, **kwargs)
+                    transaction.commit()
+                    return # Everthing OK
+                else:
+                    # Product had already been decremented
+                    transaction.rollback() # Nothing have been done anyway
+
+
+        # Globalement tu devrais éviter les changements de status dans les deux sens. Creez un nouvel Order si l'ancien a été Aborted
+        if self.id is None: # self.status in Order.EXISTING_STATUS:
+            Product.objects.filter(pk = self.product.pk).update(stock = F('stock') + 1 )
         super(Order, self).save(*args, **kwargs)
-        self.__original_status = self.status
 
     def __str__(self):
         return self.status
