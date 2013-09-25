@@ -22,7 +22,7 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         if self.status == "AB": # If status == AB, check products we need to update
             with transaction.commit_manually():
-                updated_product = Product.objects.filter(order__pk = self.pk, order__status = 'PR').update(stock = F('stock') - 1 )
+                updated_product = Product.objects.filter(order__pk = self.pk, order__status = 'PR').update(stock = F('stock') + 1 )
                 sleep(1) # To have some fun
                 if updated_product == 1:
                     super(Order, self).save(*args, **kwargs)
