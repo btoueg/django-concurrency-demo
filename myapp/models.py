@@ -35,7 +35,7 @@ class Order(models.Model):
 
         # Globalement tu devrais éviter les changements de status dans les deux sens. Creez un nouvel Order si l'ancien a été Aborted
         if self.id is None: # self.status in Order.EXISTING_STATUS:
-            Product.objects.filter(pk = self.product.pk).update(stock = F('stock') + 1 )
+            Product.objects.filter(pk = self.product.pk).update(stock = F('stock') - 1 )
         super(Order, self).save(*args, **kwargs)
 
     def __str__(self):
