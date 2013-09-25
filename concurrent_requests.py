@@ -41,7 +41,7 @@ def main(accept=False, abort=False):
     data = response.read().decode('utf-8')
     order_id = json.loads(data)['id']
     time.sleep(1)
-    for i in range(2):
+    for i in range(5):
         p = Process(target=cancel_order, args=[order_id])
         p.start()
 
