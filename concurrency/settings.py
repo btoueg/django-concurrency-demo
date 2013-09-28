@@ -83,3 +83,22 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            # logging handler that outputs log messages to terminal
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG', # message level to be written to console
+        },
+    },
+    'loggers': {
+        # catch-all logger
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,            
+        },
+    }
+}

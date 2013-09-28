@@ -23,7 +23,7 @@ class Order(models.Model):
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
         self.__original_status = self.status
-        print(self.__original_status)
+        print("Order status is %s at init."%self.__original_status)
 
     def save(self, *args, **kwargs):
         old_status = self.__original_status
