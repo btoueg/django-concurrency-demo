@@ -1,49 +1,25 @@
-from rest_framework import generics
-from rest_framework import serializers
-from rest_framework.exceptions import APIException
-from rest_framework import status
+from .models import Product, Order
 
-from .models import Order
+from django.views.generic import View
+from django.http.response import HttpResponse
 
-class ConflictWithAnotherRequest(APIException):
-    status_code = status.HTTP_409_CONFLICT
-    default_detail = "Assuming expired database state."
-
-    def __init__(self, detail=None):
-        self.detail = (detail or self.default_detail)
-
-class OrderSimpleSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Order
-        fields = (
-            'id',
-            'product',
-            'status',
-        )
-        read_only_fields = (
-            'status',
-        )
-
-
-class OrderList(generics.ListCreateAPIView):
-    model = Order
-    serializer_class = OrderSimpleSerializer
-
-    def pre_save(self, obj):
-        super(OrderList,self).pre_save(obj)
-        product = obj.product
+class OrderList(View):
+    def post(self, request, *args, **kwargs):
+        product_id = request.POST.get('product')
+        product = Product.objects.get(pk = product_id)
         if not product.stock > 0:
-            raise ConflictWithAnotherRequest("Product is not available anymore.")
-        obj.status = Order.INPROGRESS
+            return HttpResponse("Conflict", status = 409)
+        order = Order()
+        order.product = product
+        order.status = Order.INPROGRESS
+        order.save()
+        return HttpResponse(order.id, status = 201)
 
 
-class OrderDetail(generics.RetrieveUpdateAPIView):
-    model = Order
+class OrderAbort(View):
+    def post(self, request, pk, *args, **kwargs):
+        order = Order.objects.get(pk=pk)
+        order.status = Order.ABORTED
+        order.save()
+        return HttpResponse("Order aborted")
 
-class OrderAbort(generics.RetrieveUpdateAPIView):
-    model = Order
-    serializer_class = OrderSimpleSerializer
-
-    def pre_save(self, obj):
-        obj.status = Order.ABORTED

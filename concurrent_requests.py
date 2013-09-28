@@ -24,7 +24,7 @@ def create_order():
 
 def cancel_order(order_id):
     abort_url = 'http://127.0.0.1:8000/order/{}/abort/'.format(order_id)
-    values = {'product':1,'_method':'PUT'}
+    values = {'product':1}
     data  = urllib.parse.urlencode(values).encode('utf-8')
     request = urllib.request.Request(abort_url, data)
     try:
@@ -39,7 +39,7 @@ def main(accept=False, abort=False):
     response = create_order()
     print(response.getcode())
     data = response.read().decode('utf-8')
-    order_id = json.loads(data)['id']
+    order_id = data
     time.sleep(1)
     for i in range(5):
         p = Process(target=cancel_order, args=[order_id])
