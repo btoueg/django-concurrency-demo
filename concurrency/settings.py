@@ -63,6 +63,7 @@ DATABASES = {
         'NAME': 'concurrency',
         'USER': 'postgres',
         'PASSWORD': 'password',
+        'ATOMIC_REQUESTS': True,
     }
 }
 
@@ -85,5 +86,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-ATOMIC_REQUESTS = True
 
