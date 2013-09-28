@@ -15,7 +15,7 @@ import json
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor)
 
 def create_order():
-    url = 'http://127.0.0.1:8000/order/'
+    url = 'http://127.0.0.1:8000/create_order/'
     values = {'product':1}
     data  = urllib.parse.urlencode(values).encode('utf-8')
     request = urllib.request.Request(url, data)
@@ -23,7 +23,7 @@ def create_order():
     return response
 
 def cancel_order(order_id):
-    abort_url = 'http://127.0.0.1:8000/order/{}/abort/'.format(order_id)
+    abort_url = 'http://127.0.0.1:8000/cancel_order/%s/'%order_id
     values = {'product':1}
     data  = urllib.parse.urlencode(values).encode('utf-8')
     request = urllib.request.Request(abort_url, data)

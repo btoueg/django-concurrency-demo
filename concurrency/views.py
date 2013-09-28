@@ -3,7 +3,7 @@ from .models import Product, Order
 from django.views.generic import View
 from django.http.response import HttpResponse
 
-class OrderList(View):
+class OrderCreate(View):
     def post(self, request, *args, **kwargs):
         product_id = request.POST.get('product')
         product = Product.objects.get(pk = product_id)
@@ -16,7 +16,7 @@ class OrderList(View):
         return HttpResponse(order.id, status = 201)
 
 
-class OrderAbort(View):
+class OrderCancel(View):
     def post(self, request, pk, *args, **kwargs):
         order = Order.objects.get(pk=pk)
         order.status = Order.ABORTED
