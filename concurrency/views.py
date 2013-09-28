@@ -18,7 +18,7 @@ class OrderCreate(View):
 
 class OrderCancel(View):
     def post(self, request, pk, *args, **kwargs):
-        order = Order.objects.get(pk=pk)
+        order = Order.objects.select_for_update(nowait=True).get(pk=pk)
         order.status = Order.ABORTED
         order.save()
         return HttpResponse("Order aborted")

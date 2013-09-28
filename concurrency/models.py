@@ -23,14 +23,13 @@ class Order(models.Model):
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
         self.__original_status = self.status
-        print("Order status is %s at init."%self.__original_status)
 
     def save(self, *args, **kwargs):
         old_status = self.__original_status
         new_status = self.status
         has_changed_status = old_status != new_status
         if has_changed_status:
-            product = Product.objects.select_for_update(nowait=True).get(pk=self.product.pk)
+            product = self.product
             if not old_status in Order.EXISTING_STATUS and new_status in Order.EXISTING_STATUS:
                 product.stock = F('stock') - 1
                 product.save(update_fields=['stock'])
