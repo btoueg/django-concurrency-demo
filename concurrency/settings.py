@@ -48,8 +48,6 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'concurrency.urls'
 
-WSGI_APPLICATION = 'concurrency.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
