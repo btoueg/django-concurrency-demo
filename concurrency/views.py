@@ -22,4 +22,3 @@ class OrderAbort(View):
         order.status = Order.ABORTED
         order.save()
         return HttpResponse("Order aborted")
-

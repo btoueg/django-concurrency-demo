@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from myapp.views import *
+from .views import *
 
 urlpatterns = patterns('',
     url(r'^order/$', OrderList.as_view(), name='order-list'),
