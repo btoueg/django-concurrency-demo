@@ -15,10 +15,13 @@ class OrderCreate(View):
         order.save()
         return HttpResponse(order.id, status = 201)
 
+from django.db import transaction
 
 class OrderCancel(View):
     def post(self, request, pk, *args, **kwargs):
-        order = Order.objects.select_for_update(nowait=True).get(pk=pk)
-        order.status = Order.ABORTED
-        order.save()
+        with transaction.commit_manually():
+            order = Order.objects.select_for_update(nowait=True).get(pk=pk)
+            order.status = Order.ABORTED
+            order.save()
+            transaction.commit()
         return HttpResponse("Order aborted")

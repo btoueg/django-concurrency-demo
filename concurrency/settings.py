@@ -59,7 +59,6 @@ DATABASES = {
         'NAME': 'concurrency',
         'USER': 'postgres',
         'PASSWORD': 'password',
-        'ATOMIC_REQUESTS': True,
     }
 }
 
