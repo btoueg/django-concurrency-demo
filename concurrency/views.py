@@ -20,7 +20,7 @@ from django.db import transaction
 class OrderCancel(View):
     def post(self, request, pk, *args, **kwargs):
         with transaction.commit_manually():
-            order = Order.objects.select_for_update(nowait=True).get(pk=pk)
+            order = Order.objects.select_for_update(nowait=False).get(pk=pk)
             order.status = Order.ABORTED
             order.save()
             transaction.commit()
